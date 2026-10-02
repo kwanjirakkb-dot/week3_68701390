@@ -16,6 +16,7 @@
           <th>นามสกุล</th>        <!-- lastName -->
           <th>เบอร์โทร</th>       <!-- phone -->
           <th>ชื่อผู้ใช้</th>      <!-- username -->
+          <th>ลบ</th>
         </tr>
       </thead>
 
@@ -28,6 +29,7 @@
           <td>{{ item.lastName }}</td>    <!-- นามสกุล -->
           <td>{{ item.phone }}</td>       <!-- เบอร์โทร -->
           <td>{{ item.username }}</td>    <!-- ชื่อผู้ใช้ -->
+          <td><button class="btn btn-danger btn-sm" @click="deleteCustomer(item.customer_id)">ลบ</button></td>
         </tr>
       </tbody>
     </table>
@@ -91,11 +93,44 @@ export default {
       fetchdata(); // เรียก API ทันที
     });
 
+
+   //ฟังก์ชั่นการลบข้อมูล ***
+const deleteCustomer = async (id) => {
+  if (!confirm("คุณต้องการลบข้อมูลนี้ใช่หรือไม่?")) return;
+
+  try {
+    const response = await fetch("http://localhost/week3_68701390/php_api/api_customer.php", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ customer_id: id })
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      // ลบออกจาก customers ทันที (ไม่ต้องโหลดใหม่)
+      customers.value = customers.value.filter(c => c.customer_id !== id);
+      alert(result.message);
+    } else {
+      alert(result.message);
+    }
+
+  } catch (err) {
+    alert("เกิดข้อผิดพลาด: " + err.message);
+  }
+};
+
+
+
+
     // -----------------------------
     // return ค่าไปใช้ใน template
     // -----------------------------
     return {
       customers,
+      deleteCustomer,
       loading,
       error
     };
