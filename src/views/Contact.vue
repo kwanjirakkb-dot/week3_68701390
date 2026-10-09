@@ -28,7 +28,7 @@
           :key="item.contact_id"
         >
           <td>{{ index + 1 }}</td>
-          <td>{{ item.contact_id }}</td>
+          <td>{{ item.id }}</td>
           <td>{{ item.subject }}</td>
           <td>{{ item.detail }}</td>
           <td>{{ item.fullname }}</td>
