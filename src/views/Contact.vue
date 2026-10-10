@@ -25,7 +25,7 @@
       <tbody>
         <tr
           v-for="(item, index) in contacts"
-          :key="item.contact_id"
+          :key="item.id"
         >
           <td>{{ index + 1 }}</td>
           <td>{{ item.id }}</td>

@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 02, 2026 at 11:12 AM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- Generation Time: Oct 09, 2026 at 07:28 AM
+-- Server version: 10.4.27-MariaDB
+-- PHP Version: 8.1.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -41,7 +41,8 @@ CREATE TABLE `contacts` (
 --
 
 INSERT INTO `contacts` (`id`, `subject`, `detail`, `fullname`, `email`, `created_at`) VALUES
-(1, 'งงงง', 'งงงงง', 'หใสบฟ', 'k36889017@gmail.com', '2026-10-02 06:04:03');
+(1, 'งงงง', 'งงงงง', 'หใสบฟ', 'k36889017@gmail.com', '2026-10-02 06:04:03'),
+(2, 'huyighho8', '33mbijk', 'นาน่า ดีน่า', 'fdsojfsdki@gmail.com', '2026-10-09 04:25:45');
 
 -- --------------------------------------------------------
 
@@ -65,7 +66,7 @@ CREATE TABLE `customers` (
 INSERT INTO `customers` (`customer_id`, `firstName`, `lastName`, `phone`, `username`, `password`) VALUES
 (00000001, 'มานะ', 'เด็กดี', '038756921', 'mana', '1234'),
 (00000002, 'มานี', 'ใจดี', '038756901', 'manee', '1234'),
-(00000005, 'มีใจ', 'ปลา', '038256921', 'meejai', '1234');
+(00000005, 'มีใจ', 'ปลาทอง', '038256921', 'meejai', '1234');
 
 -- --------------------------------------------------------
 
@@ -90,7 +91,8 @@ INSERT INTO `employee` (`emp_id`, `firstName`, `lastName`, `phone`, `username`, 
 (000001, 'มานา', 'นีนี', '038756923', 'mana', '1234'),
 (000002, 'มาดี', 'ปรีดา', '038756911', 'madee', '1234'),
 (000003, 'สมชาย', 'ดี', '038756951', 'somchai', '1234'),
-(000004, 'สมหญิง', 'ใจ', '038756909', 'somying', '1234');
+(000004, 'สมหญิง', 'ใจดี', '038756909', 'somying', '1234'),
+(000006, 'นาน่า', 'ดีน่า', '0123544865', 'nana', '$2y$10$TpYH.NsrxhONFYFF9lh7jeFb9ZdbiUpD7wb4WHfH9G6xtQgUP8EKe');
 
 -- --------------------------------------------------------
 
@@ -113,9 +115,9 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`product_id`, `product_name`, `description`, `price`, `image`, `stock`, `created_at`) VALUES
-(1, 'เสื้อยืดคอกลม', 'เสื้อยืดผ้าฝ้าย 100% สวมใส่สบาย', 199.00, 'tshirt.jpg', 50, '2026-09-04 02:52:06'),
-(2, 'กางเกงยีนส์', 'กางเกงยีนส์ทรงกระบอก สีฟ้าอ่อน', 799.00, 'jeans.jpg', 30, '2026-09-04 02:52:06'),
-(3, 'รองเท้าผ้าใบ', 'รองเท้าผ้าใบสีขาว ใส่ได้ทุกโอกาส', 1299.00, 'sneakers.jpg', 20, '2026-09-04 02:52:06');
+(1, 'เสื้อยืดคอกลม', 'เสื้อยืดผ้าฝ้าย 100% สวมใส่สบาย', '199.00', 'tshirt.jpg', 50, '2026-09-04 02:52:06'),
+(2, 'กางเกงยีนส์', 'กางเกงยีนส์ทรงกระบอก สีฟ้าอ่อน', '799.00', 'jeans.jpg', 30, '2026-09-04 02:52:06'),
+(3, 'รองเท้าผ้าใบ', 'รองเท้าผ้าใบสีขาว ใส่ได้ทุกโอกาส', '1299.00', 'sneakers.jpg', 20, '2026-09-04 02:52:06');
 
 --
 -- Indexes for dumped tables
@@ -153,7 +155,7 @@ ALTER TABLE `products`
 -- AUTO_INCREMENT for table `contacts`
 --
 ALTER TABLE `contacts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `customers`
@@ -165,7 +167,7 @@ ALTER TABLE `customers`
 -- AUTO_INCREMENT for table `employee`
 --
 ALTER TABLE `employee`
-  MODIFY `emp_id` int(6) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `emp_id` int(6) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `products`

@@ -1,113 +1,166 @@
+
 <?php
+
+header("Content-Type: application/json; charset=UTF-8");
+
+header("Access-Control-Allow-Origin: http://localhost:8080");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(204);
+    exit;
+}
+
 include 'condb.php';
+
+include 'condb.php';
+
 header("Content-Type: application/json; charset=UTF-8");
 
 try {
     $method = $_SERVER['REQUEST_METHOD'];
 
-    // ✅ ดึงข้อมูลลูกค้าทั้งหมด
+    // GET: ดึงข้อมูลทั้งหมด
     if ($method === "GET") {
-        $stmt = $conn->prepare("SELECT * FROM contacts ORDER BY id DESC");
+        $stmt = $conn->prepare(
+            "SELECT * FROM contacts ORDER BY id DESC"
+        );
         $stmt->execute();
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        echo json_encode(["success" => true, "data" => $result]);
+
+        echo json_encode([
+            "success" => true,
+            "data" => $stmt->fetchAll(PDO::FETCH_ASSOC)
+        ], JSON_UNESCAPED_UNICODE);
     }
 
-    // ✅ เพิ่มข้อมูลลูกค้า
+    // POST: เพิ่มข้อมูล
     elseif ($method === "POST") {
-        // ตรวจสอบว่าข้อมูลมาจาก JSON หรือ form-data
-        $contentType = $_SERVER["CONTENT_TYPE"] ?? '';
+        $data = json_decode(
+            file_get_contents("php://input"), true
+        );
 
-        if (stripos($contentType, "application/json") !== false) {
-            $data = json_decode(file_get_contents("php://input"), true);
-        } else {
-            $data = $_POST;
+        if (!is_array($data)) {
+            throw new Exception("ข้อมูล JSON ไม่ถูกต้อง");
         }
 
-        // ตรวจสอบค่าว่าง
-        if (empty($data["firstName"]) || empty($data["lastName"]) || empty($data["phone"]) || empty($data["username"]) || empty($data["password"])) {
-            echo json_encode(["success" => false, "message" => "กรุณากรอกข้อมูลให้ครบ"]);
-            exit;
+        $fields = [
+            "subject", "detail", "fullname", "email"
+        ];
+
+        foreach ($fields as $field) {
+            if (!isset($data[$field]) ||
+                trim((string)$data[$field]) === "") {
+                throw new Exception("กรุณากรอกข้อมูลให้ครบ");
+            }
         }
 
+        $stmt = $conn->prepare(
+            "INSERT INTO contacts (subject, detail, fullname, email)
+            VALUES (:subject, :detail, :fullname, :email, NOW())"
+        );
 
-        // เพิ่มข้อมูลลูกค้า
-        $stmt = $conn->prepare("INSERT INTO customers (firstName, lastName, phone, username, password)
-                                VALUES (:firstName, :lastName, :phone, :username, :password)");
+        $stmt->execute([
+            ":subject" => $data["subject"],
+            ":detail" => $data["detail"],
+            ":fullname" => $data["fullname"],
+            ":email" => $data["email"]
+        ]);
 
-        $stmt->bindParam(":firstName", $data["firstName"]);
-        $stmt->bindParam(":lastName", $data["lastName"]);
-        $stmt->bindParam(":phone", $data["phone"]);
-        $stmt->bindParam(":username", $data["username"]);
-        $stmt->bindParam(":password", $data[password]);
-
-        if ($stmt->execute()) {
-            echo json_encode(["success" => true, "message" => "เพิ่มข้อมูลเรียบร้อย"]);
-        } else {
-            echo json_encode(["success" => false, "message" => "ไม่สามารถเพิ่มข้อมูลได้"]);
-        }
+        echo json_encode([
+            "success" => true,
+            "message" => "เพิ่มข้อมูลเรียบร้อย"
+        ], JSON_UNESCAPED_UNICODE);
     }
 
-    // ✅ แก้ไขข้อมูล
+    // PUT: แก้ไขข้อมูล
     elseif ($method === "PUT") {
-        $data = json_decode(file_get_contents("php://input"), true);
+        $data = json_decode(
+            file_get_contents("php://input"), true
+        );
 
-        if (!isset($data["id"])) {
-            echo json_encode(["success" => false, "message" => "ไม่พบค่า id"]);
-            exit;
+        if (!is_array($data) ||
+            !isset($data["id"]) ||
+            !is_numeric($data["id"])) {
+            throw new Exception("ไม่พบค่า id");
         }
 
-        $customer_id = intval($data["customer_id"]);
+        $fields = [
+            "subject", "detail", "fullname", "email"
+        ];
 
-            $sql = "UPDATE customers 
-                    SET firstName = :firstName, 
-                        lastName = :lastName, 
-                        phone = :phone, 
-                        username = :username
-                    WHERE customer_id = :id";
-        
-
-        $stmt = $conn->prepare($sql);
-        $stmt->bindParam(":firstName", $data["firstName"]);
-        $stmt->bindParam(":lastName", $data["lastName"]);
-        $stmt->bindParam(":phone", $data["phone"]);
-        $stmt->bindParam(":username", $data["username"]);
-        if (!empty($data["password"])) {
-            $stmt->bindParam(":password", $password_hash);
+        foreach ($fields as $field) {
+            if (!isset($data[$field])) {
+                throw new Exception("ข้อมูลไม่ครบ: " . $field);
+            }
         }
-        $stmt->bindParam(":id", $id, PDO::PARAM_INT);
 
-        if ($stmt->execute()) {
-            echo json_encode(["success" => true, "message" => "แก้ไขข้อมูลเรียบร้อย"]);
-        } else {
-            echo json_encode(["success" => false, "message" => "ไม่สามารถแก้ไขข้อมูลได้"]);
-        }
+        $stmt = $conn->prepare(
+            "UPDATE contacts SET
+                subject = :subject,
+                detail = :detail,
+                fullname = :fullname,
+                email = :email
+             WHERE id = :id"
+        );
+
+        $stmt->execute([
+            ":subject" => $data["subject"],
+            ":detail" => $data["detail"],
+            ":fullname" => $data["fullname"],
+            ":email" => $data["email"],
+            ":id" => (int)$data["id"]
+        ]);
+
+        echo json_encode([
+            "success" => true,
+            "message" => "แก้ไขข้อมูลเรียบร้อย"
+        ], JSON_UNESCAPED_UNICODE);
     }
 
-    // ✅ ลบข้อมูล
+    // DELETE: ลบข้อมูล
     elseif ($method === "DELETE") {
-        $data = json_decode(file_get_contents("php://input"), true);
+        $data = json_decode(
+            file_get_contents("php://input"), true
+        );
 
-        if (!isset($data["id"])) {
-            echo json_encode(["success" => false, "message" => "ไม่พบค่า id"]);
-            exit;
+        if (!is_array($data) ||
+            !isset($data["id"]) ||
+            !is_numeric($data["id"])) {
+            throw new Exception("ไม่พบค่า id");
         }
 
-        $stmt = $conn->prepare("DELETE FROM contacts WHERE id = :id");
-        $stmt->bindParam(":id", $data["id"], PDO::PARAM_INT);
+        $stmt = $conn->prepare(
+            "DELETE FROM contacts WHERE id = :id"
+        );
 
-        if ($stmt->execute()) {
-            echo json_encode(["success" => true, "message" => "ลบข้อมูลเรียบร้อย"]);
-        } else {
-            echo json_encode(["success" => false, "message" => "ไม่สามารถลบข้อมูลได้"]);
-        }
+        $stmt->execute([
+            ":id" => (int)$data["id"]
+        ]);
+
+        echo json_encode([
+            "success" => true,
+            "message" => "ลบข้อมูลเรียบร้อย"
+        ], JSON_UNESCAPED_UNICODE);
     }
 
     else {
-        echo json_encode(["success" => false, "message" => "Method ไม่ถูกต้อง"]);
+        http_response_code(405);
+
+        echo json_encode([
+            "success" => false,
+            "message" => "Method ไม่ถูกต้อง"
+        ], JSON_UNESCAPED_UNICODE);
     }
 
-} catch (Exception $e) {
-    echo json_encode(["success" => false, "message" => $e->getMessage()]);
+} catch (Throwable $e) {
+    error_log($e->getMessage());
+
+    http_response_code(500);
+
+    echo json_encode([
+        "success" => false,
+        "message" => $e->getMessage()
+    ], JSON_UNESCAPED_UNICODE);
 }
 ?>

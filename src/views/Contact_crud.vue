@@ -106,17 +106,22 @@ export default {
         const response = await fetch("http://localhost/week3_68701390/php_api/contact_crud.php");
         const result = await response.json();
 
-        if (result.success) {
-          contacts.value = result.data;
-        } else {
-          error.value = result.message;
-        }
-      } catch (err) {
-        error.value = err.message;
-      } finally {
-        loading.value = false;
-      }
-    };
+    if (!response.ok || !result.success) {
+      throw new Error(
+        result.message || "ไม่สามารถดึงข้อมูลได้"
+      );
+    }
+
+    contacts.value = result.data;
+    error.value = null;
+
+  } catch (err) {
+    error.value = err.message;
+
+  } finally {
+    loading.value = false;
+  }
+};
 
     onMounted(() => {
       fetchCustomers();
@@ -133,7 +138,7 @@ export default {
         detail: "",
         fullname: "",
         email: "",
-        created_at: ""
+
       };
       editModal.show();
     };
@@ -141,7 +146,7 @@ export default {
     // ✅ เปิด Modal แก้ไขลูกค้า
     const openEditModal = (item) => {
       isEditMode.value = true;
-      editCustomer.value = { ...item, password: "" };
+      editCustomer.value = { ...item };
       editModal.show();
     };
 
