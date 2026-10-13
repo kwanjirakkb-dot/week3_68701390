@@ -57,7 +57,7 @@ try {
 
         $stmt = $conn->prepare(
             "INSERT INTO contacts (subject, detail, fullname, email)
-            VALUES (:subject, :detail, :fullname, :email, NOW())"
+            VALUES (:subject, :detail, :fullname, :email)"
         );
 
         $stmt->execute([

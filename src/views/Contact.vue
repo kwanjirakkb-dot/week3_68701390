@@ -64,7 +64,7 @@ export default {
     const fetchdata = async () => {
       try {
         const response = await fetch(
-          "http://localhost/week3_68701390/php_api/contacts.php"
+          "http://localhost/week3_68701390/php_api/show_contacts.php"
         );
 
         if (!response.ok) {

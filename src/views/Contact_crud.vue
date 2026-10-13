@@ -71,10 +71,7 @@
                 <label class="form-label">Email</label>
                 <input v-model="editCustomer.email" type="text" class="form-control" required>
               </div>
-              <div class="mb-3">
-                <label class="form-label">วันที่เพิ่มข้อมูล</label>
-                <input v-model="editCustomer.created_at" type="text" class="form-control" required>
-              </div>
+
 
               <button type="submit" class="btn btn-success">
                 {{ isEditMode ? "บันทึกการแก้ไข" : "เพิ่มข้อมูล" }}
