@@ -66,6 +66,24 @@ const routes = [
     name: 'add_contact',
     
     component: () => import('../views/Add_contact.vue')
+  },
+  {
+    path: '/product',
+    name: 'product',
+    
+    component: () => import('../views/Product.vue')
+  },
+  {
+    path: '/show_product',
+    name: 'show_product',
+    
+    component: () => import('../views/Show_Product.vue')
+  },
+  {
+    path: '/asset',
+    name: 'asset',
+    
+    component: () => import('../views/Asset.vue')
   }
 ]
 
