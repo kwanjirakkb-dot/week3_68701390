@@ -69,7 +69,7 @@ try {
                         phone = :phone, 
                         username = :username,
                         password = :password
-                    WHERE epm_id = :id";
+                    WHERE emp_id = :id";
         } else {
             $sql = "UPDATE employee 
                     SET firstName = :firstName, 
